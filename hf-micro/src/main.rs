@@ -52,6 +52,11 @@ struct AcctResponse {
     auth: Nest<Auth>,
 }
 
+#[get("/")]
+async fn home() -> impl Responder {
+    HttpResponse::Ok().body("Welcome to the Rust HuggingFace API Interface!")
+}
+
 // GET HuggingFace Hub account info from /api/whoami-v2 GET
 #[get("/account")]
 async fn account() -> impl Responder {
@@ -86,6 +91,8 @@ async fn main() -> std::io::Result<()> {
         App::new()
             // enable logger
             .wrap(middleware::Logger::default())
+            // homepage
+            .service(home)
             // define under '/api/' route
             .service(web::scope("/api").service(account))
     })

@@ -1,63 +1,18 @@
 /*
 An Actix microservice that uses reqwest to interface with the HuggingFace Hub REST API.
-
  */
 
+mod structs;
+use crate::structs::AcctResponse;
 use actix_web::{get, middleware, web, App, HttpResponse, HttpServer, Responder};
-use serde::{Deserialize, Serialize};
 
-// Nested struct helper
-#[derive(Serialize, Deserialize, Debug)]
-struct Nest<T> {
-    #[serde(flatten)]
-    inner: T
-}
-
-// Define AccessToken struct
-#[derive(Serialize, Deserialize, Debug)]
-struct AccessToken {
-    #[serde(rename = "displayName")]
-    display_name: String,
-    role: String,
-}
-// Define Token struct
-#[derive(Serialize, Deserialize, Debug)]
-struct Auth {
-    #[serde(rename = "type")]
-    auth_type: String,
-    #[serde(rename = "accessToken")]
-    access_token: Nest<AccessToken>,
-}
-// Define acct response struct
-#[derive(Serialize, Deserialize, Debug)]
-struct AcctResponse {
-    #[serde(rename = "type")]
-    acct_type: String,
-    id: String,
-    name: String,
-    fullname: String,
-    email: String,
-    #[serde(rename = "emailVerified")]
-    email_verified: bool,
-    plan: String,
-    #[serde(rename = "canPay")]
-    can_pay: bool,
-    #[serde(rename = "isPro")]
-    is_pro: bool,
-    #[serde(rename = "periodEnd")]
-    period_end: Option<String>,
-    #[serde(rename = "avatarUrl")]
-    avatar_url: String,
-    orgs: Vec<String>,
-    auth: Nest<Auth>,
-}
-
+// Home route
 #[get("/")]
 async fn home() -> impl Responder {
     HttpResponse::Ok().body("Welcome to the Rust HuggingFace API Interface!")
 }
 
-// GET HuggingFace Hub account info from /api/whoami-v2 GET
+// GET HuggingFace Hub account info from https://huggingface.co/api/whoami-v2
 #[get("/account")]
 async fn account() -> impl Responder {
     // Create a new reqwest client

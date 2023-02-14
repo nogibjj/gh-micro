@@ -3,7 +3,54 @@ An Actix microservice that uses reqwest to interface with the HuggingFace Hub RE
 
  */
 
-use actix_web::{get, web, App, middleware, HttpResponse, HttpServer, Responder};
+use actix_web::{get, middleware, web, App, HttpResponse, HttpServer, Responder};
+use serde::{Deserialize, Serialize};
+
+// Nested struct helper
+#[derive(Serialize, Deserialize, Debug)]
+struct Nest<T> {
+    #[serde(flatten)]
+    inner: T
+}
+
+// Define AccessToken struct
+#[derive(Serialize, Deserialize, Debug)]
+struct AccessToken {
+    #[serde(rename = "displayName")]
+    display_name: String,
+    role: String,
+}
+// Define Token struct
+#[derive(Serialize, Deserialize, Debug)]
+struct Auth {
+    #[serde(rename = "type")]
+    auth_type: String,
+    #[serde(rename = "accessToken")]
+    access_token: Nest<AccessToken>,
+}
+// Define acct response struct
+#[derive(Serialize, Deserialize, Debug)]
+struct AcctResponse {
+    #[serde(rename = "type")]
+    acct_type: String,
+    id: String,
+    name: String,
+    fullname: String,
+    email: String,
+    #[serde(rename = "emailVerified")]
+    email_verified: bool,
+    plan: String,
+    #[serde(rename = "canPay")]
+    can_pay: bool,
+    #[serde(rename = "isPro")]
+    is_pro: bool,
+    #[serde(rename = "periodEnd")]
+    period_end: Option<String>,
+    #[serde(rename = "avatarUrl")]
+    avatar_url: String,
+    orgs: Vec<String>,
+    auth: Nest<Auth>,
+}
 
 // GET HuggingFace Hub account info from /api/whoami-v2 GET
 #[get("/account")]
@@ -17,20 +64,19 @@ async fn account() -> impl Responder {
     let res = client
         .get("https://huggingface.co/api/whoami-v2")
         .header("authorization", auth_str)
-        // .header("content_type", "application/json")
-        // .header(ACCEPT, "application/json")
         .send()
         .await
-        .unwrap()
-        .text()
-        .await;
-    // print response
-    println!("{res:?}");
-    HttpResponse::Ok().body("Hello")
-
+        .unwrap();
+    // Deserialize response
+    let res_json = res.json::<AcctResponse>().await.unwrap();
+    // Print response
+    println!("{res_json:?}");
+    let res_body = serde_json::to_string(&res_json).unwrap();
+    // Return response
+    HttpResponse::Ok().body(res_body)
 }
 
-// Build actix web client to make requests to the HuggingFace Hub REST API
+// Actix web client to make requests to the HuggingFace Hub REST API
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // Check for .env file and load environment variables
@@ -40,16 +86,10 @@ async fn main() -> std::io::Result<()> {
         App::new()
             // enable logger
             .wrap(middleware::Logger::default())
-            // everything under '/api/' route
-            .service(
-                web::scope("/api")
-                    .service(account)
-            )
+            // define under '/api/' route
+            .service(web::scope("/api").service(account))
     })
     .bind("0.0.0.0:8080")?
     .run()
     .await
 }
-
-
-

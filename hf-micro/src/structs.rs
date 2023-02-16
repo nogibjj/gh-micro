@@ -53,18 +53,38 @@ pub struct AcctResponse {
 }
 
 /*
-POST /api/newrepo
+POST /api/repo
  */
 #[derive(Serialize, Deserialize, Debug)]
 pub struct NewRepo {
     #[serde(rename = "type")]
     pub repo_type: String,
     pub name: String,
-    pub organisation: String,
     pub private: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RepoResponse {
-    url: String
+    pub url: String,
+}
+
+/*
+DELETE /api/repo
+ */
+#[derive(Serialize, Deserialize, Debug)]
+pub struct DeleteRepo {
+    #[serde(rename = "type")]
+    pub repo_type: String,
+    pub name: String,
+}
+
+/*
+PUT /api/repo
+ */
+#[derive(Serialize, Deserialize, Debug)]
+pub struct UpdateRepo {
+    #[serde(rename = "type")]
+    pub repo_type: String,
+    pub namespace: String,
+    pub private: bool,
 }

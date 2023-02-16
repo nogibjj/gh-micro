@@ -1,11 +1,7 @@
 /*
 An Actix microservice that uses reqwest to interface with the HuggingFace Hub REST API.
  */
-// mod structs;
-// use structs::{AcctResponse, NewRepo};
-use serde::Deserialize;
-
-use actix_web::{middleware, web, App, HttpResponse, Responder, HttpServer};
+use actix_web::{middleware, web, App, HttpServer};
 
 // Actix web client to make requests to the HuggingFace Hub REST API
 #[actix_web::main]
@@ -22,12 +18,17 @@ async fn main() -> std::io::Result<()> {
             // define under '/api/' route
             .service(
                 web::scope("/api")
+                    // GET /api/account
                     .service(hf_micro::account)
+                    // POST /api/repo
                     .service(
-                        web::resource("/newrepo")
-                            .route(web::post().to(hf_micro::newrepo)),
-                    )
-                )
+                        web::resource("/repo")
+                            // DELETE /api/repo
+                            .route(web::post().to(hf_micro::new_repo))
+                            .route(web::delete().to(hf_micro::delete_repo))
+                            .route(web::put().to(hf_micro::update_repo)),
+                    ),
+            )
     })
     .bind("0.0.0.0:8080")?
     .run()

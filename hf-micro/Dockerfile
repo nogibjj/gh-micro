@@ -1,5 +1,5 @@
 FROM rust:latest as builder
-ENV APP actix
+ENV APP hf-micro
 WORKDIR /usr/src/$APP
 COPY . .
 RUN cargo install --path .

@@ -3,10 +3,10 @@ install:
 		cargo build -j 1
 
 build:
-	docker build -t hf-rust .
+	docker build -t rust .
 
 rundocker:
-	docker run -it --rm -p 8080:8080 hf-rust
+	docker run -it --rm -p 8080:8080 rust
 
 format:
 	cargo fmt --quiet

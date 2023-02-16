@@ -51,3 +51,20 @@ pub struct AcctResponse {
     orgs: Vec<String>,
     auth: Nest<Auth>,
 }
+
+/*
+POST /api/newrepo
+ */
+#[derive(Serialize, Deserialize, Debug)]
+pub struct NewRepo {
+    #[serde(rename = "type")]
+    pub repo_type: String,
+    pub name: String,
+    pub organisation: String,
+    pub private: bool,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct RepoResponse {
+    url: String
+}

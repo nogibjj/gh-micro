@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  hf-micro:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: hf-micro
+    environment:
+      - HF_ACCESS_TOKEN
+    ports:
+      - "8080:8080"

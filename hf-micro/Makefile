@@ -3,10 +3,10 @@ install:
 		cargo build -j 1
 
 build:
-	docker build -t rust .
+	docker-compose build
 
 rundocker:
-	docker run -it --rm -p 8080:8080 rust
+	docker-compose run -e HF_ACCESS_TOKEN=<YOUR_TOKEN> hf-micro
 
 format:
 	cargo fmt --quiet

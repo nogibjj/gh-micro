@@ -1,5 +1,4 @@
-version: '3.8'
-
+version: '3'
 services:
   hf-micro:
     build:
@@ -9,4 +8,4 @@ services:
     environment:
       - HF_ACCESS_TOKEN
     ports:
-      - "8080:8080"
+    - 8080:8080

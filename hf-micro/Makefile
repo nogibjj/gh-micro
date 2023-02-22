@@ -6,7 +6,7 @@ build:
 	docker-compose build
 
 rundocker:
-	docker-compose run -e HF_ACCESS_TOKEN=<YOUR_TOKEN> hf-micro
+	docker run -e HF_ACCESS_TOKEN=<YOUR_ACCESS_TOKEN> -p 8080:8080 hf-micro
 
 format:
 	cargo fmt --quiet

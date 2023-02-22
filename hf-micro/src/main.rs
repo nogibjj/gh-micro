@@ -8,6 +8,7 @@ use actix_web::{middleware, web, App, HttpServer};
 async fn main() -> std::io::Result<()> {
     // Check for .env file and load environment variables
     dotenv::dotenv().ok();
+    println!("Actix web server launched...");
     // Start http server
     HttpServer::new(move || {
         App::new()

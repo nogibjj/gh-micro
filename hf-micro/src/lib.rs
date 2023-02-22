@@ -2,6 +2,31 @@ mod structs;
 use crate::structs::{AcctResponse, DeleteRepo, NewRepo, RepoResponse, UpdateRepo};
 use actix_web::{get, web, HttpResponse, Responder};
 use serde_json::json;
+use std::fs::File;
+use std::io::Read;
+
+
+// Function to create a reqwest certificate from pem file, returns cert or error
+fn get_cert() -> Result<reqwest::Certificate, reqwest::Error> {
+    // Read cert file
+    let mut cert_file = File::open("./src/certs/cert.pem").unwrap();
+    let mut cert_contents = String::new();
+    cert_file.read_to_string(&mut cert_contents).unwrap();
+    // Create reqwest certificate
+    let cert = reqwest::Certificate::from_pem(cert_contents.as_bytes())?;
+    Ok(cert)
+}
+
+// Function to create a reqwest client with certificate, returns client or error
+fn get_client() -> Result<reqwest::Client, reqwest::Error> {
+    // Create reqwest certificate
+    let cert = get_cert()?;
+    // Create reqwest client
+    let client = reqwest::Client::builder()
+        .add_root_certificate(cert)
+        .build()?;
+    Ok(client)
+}
 
 // Home route
 #[get("/")]
@@ -14,8 +39,8 @@ async fn home() -> impl Responder {
 #[get("/account")]
 async fn account() -> impl Responder {
     println!("GET /api/account request received");
-    // Create a new reqwest client
-    let client = reqwest::Client::new();
+    // Create a new certified reqwest client
+    let client = get_client().unwrap();
     // Create authorization string
     let auth_token = dotenv::var("HF_ACCESS_TOKEN").expect("AUTH_TOKEN must be set");
     let auth_str = format!("Bearer {auth_token}");
@@ -47,8 +72,8 @@ async fn account() -> impl Responder {
 // POST new repo to HuggingFace Hub https://huggingface.co/api/repos/create
 pub async fn new_repo(repo_config: web::Json<NewRepo>) -> impl Responder {
     println!("POST /api/repo request received");
-    // Create a new reqwest client
-    let client = reqwest::Client::new();
+    // Create a new certified reqwest client
+    let client = get_client().unwrap();
     // Create authorization string
     let auth_token = dotenv::var("HF_ACCESS_TOKEN").expect("AUTH_TOKEN must be set");
     let auth_str = format!("Bearer {auth_token}");

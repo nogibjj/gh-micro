@@ -3,9 +3,38 @@
 The [HuggingFace Hub](https://github.com/huggingface/huggingface_hub) is implemented as a Python wrapper around the HuggingFace API Endpoints. This project is a dockerized Rust microservice that acts as an API proxy for the HuggingFace API Endpoints. 
 
 ## Setup
-1. Rename `SAMPLE_ENV` to `.env` and save
+1. Install
+
+    ```
+    $ cd hf-micro
+    $ make install
+    ```
+
 2. Generate a [HuggingFace personal access token](https://huggingface.co/docs/hub/security-tokens) with write permissions
-3. Set your HF personal access token in `.env`
+3. Configure environment variables below per choice of launching locally or within Docker
+
+**Run locally**
+1. Rename `SAMPLE_ENV` to `.env` and save
+2. Set your HF personal access token in `.env`
+3. Run local microservice on localhost:8080
+
+    ```
+    $ make run
+    ```
+
+**Run within Docker**
+1. Set your HF personal access token in [Makefile](./hf-micro/Makefile)
+2. Build Docker image
+
+    ```
+    $ make build
+    ```
+
+3. Run Docker image
+
+    ```
+    $ make rundocker
+    ```
 
 ## Useage
 
@@ -47,13 +76,15 @@ Supported endpoints:
     }
     ```
 
-**Todos**
+## ToDos
 
-* Docker container and deploy to AWS
-* Python benchmarking
-
-## Deploy to AWS
-1. Create Cloud9 env -- install from rustup, run `source "$HOME/.cargo/env"`
+- [x] Configure GET, POST, DELETE, PUSH routes
+- [x] Pass environment variables into Docker per [docs](https://docs.docker.com/compose/environment-variables/set-environment-variables/#set-environment-variables-with-docker-compose-run---env)
+- [ ] Fix Docker CA certificate bug
+- [ ] Unit testing
+- [ ] Python benchmarking
+- [ ] CI/CD & Binary Release
+- [ ] AWS Deployment?
 
 
 ## References

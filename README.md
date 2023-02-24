@@ -2,18 +2,26 @@
 
 The [HuggingFace Hub](https://github.com/huggingface/huggingface_hub) is implemented as a Python wrapper around the HuggingFace API Endpoints. This project is a dockerized Rust microservice that acts as an API proxy for the HuggingFace API Endpoints. 
 
+## What I Learnt
+
+* Configuring reqwest for GET, POST, PUT, DELETE requests
+* Certifying HTTPS using reqwest from within a Docker image (spent days exhausting certification solutions to debug this issue and it all came down to enabling the rustls-tls feature in reqwest and installing debian ca-certificates 🤯)
+
+
 ## Setup
-1. Install
 
-    ```
-    $ cd hf-micro
-    $ make install
-    ```
+**Install**
+```
+$ cd hf-micro
+$ make install
+```
 
-2. Generate a [HuggingFace personal access token](https://huggingface.co/docs/hub/security-tokens) with write permissions
-3. Configure environment variables below per choice of launching locally or within Docker
+**HuggingFace Access Token**
+1. Generate a [HuggingFace personal access token](https://huggingface.co/docs/hub/security-tokens) with write permissions
+2. Configure environment variables below per choice of launching locally or within Docker
 
-**Run locally**
+
+**To launch locally**
 1. Rename `SAMPLE_ENV` to `.env` and save
 2. Set your HF personal access token in `.env`
 3. Run local microservice on localhost:8080
@@ -22,8 +30,8 @@ The [HuggingFace Hub](https://github.com/huggingface/huggingface_hub) is impleme
     $ make run
     ```
 
-**Run within Docker**
-1. Set your HF personal access token in [Makefile](./hf-micro/Makefile)
+**To launch within Docker**
+1. Set your HF personal access token in [Makefile](./hf-micro/Makefile) line 2 
 2. Build Docker image
 
     ```
@@ -36,9 +44,25 @@ The [HuggingFace Hub](https://github.com/huggingface/huggingface_hub) is impleme
     $ make rundocker
     ```
 
-## Useage
+**Docker Debugging CA-Certificates**
 
-Supported endpoints:
+If you have CA-certification issues you may need to manually mount self-signed certificates to the Docker image instead. To do this first generate .pem certificate
+```
+# make local certs dir
+$ mkdir ./certs
+# generate ca-certificates
+$ openssl req -x509 -newkey rsa:4096 -keyout ./certs/key.pem -out ./cert.pem -sha256 -days 365 -nodes -subj '/CN=localhost'
+```
+
+Then launch Docker image with mounted certificates
+
+```
+$ make mntcerts
+```
+
+## Useage & Endpoints
+
+Supported endpoints to base URL https://localhost:8080
 
 **GET /** -- Homepage
 
@@ -80,7 +104,7 @@ Supported endpoints:
 
 - [x] Configure GET, POST, DELETE, PUSH routes
 - [x] Pass environment variables into Docker per [docs](https://docs.docker.com/compose/environment-variables/set-environment-variables/#set-environment-variables-with-docker-compose-run---env)
-- [ ] Fix Docker CA certificate bug
+- [x] Debug reqwest x Rust x Docker CA Certificate bug
 - [ ] Unit testing
 - [ ] Python benchmarking
 - [ ] CI/CD & Binary Release
@@ -94,3 +118,4 @@ Supported endpoints:
 * [HF Hub REST API Endpoints](https://huggingface.co/docs/hub/api)
 * [Actix extractors](https://actix.rs/docs/extractors/)
 * [reqwest crate docs](https://crates.io/crates/reqwest)
+* [TLS Debugging Docker](https://smallstep.com/blog/automate-docker-ssl-tls-certificates/)

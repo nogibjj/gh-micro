@@ -1,18 +1,21 @@
+![CI/CD Pipeline](https://github.com/athletedecoded/hf-micro/actions/workflows/deploy.yml/badge.svg)
+
 # IDS721 Spring 2023 Project 2 - Rust Containerized Microservice
 
 The [HuggingFace Hub](https://github.com/huggingface/huggingface_hub) is implemented as a Python wrapper around the HuggingFace API Endpoints. This project is a dockerized Rust microservice that acts as an API proxy for the HuggingFace API Endpoints. 
 
+![image](./assets/hf-micro.png)
+
 ## What I Learnt
 
 * Configuring reqwest for GET, POST, PUT, DELETE requests
-* Certifying HTTPS using reqwest from within a Docker image -- I spent hours debugging and exhausting certification solutions and it all came down to enabling the rustls-tls feature in reqwest and installing debian ca-certificates 🤯
+* Certifying HTTPS using reqwest from within a Docker image -- I spent days debugging and exhausting certification solutions and it all came down to enabling the rustls-tls feature in reqwest and installing debian ca-certificates 🤯
 
 
 ## Setup
 
 **Install**
 ```
-$ cd hf-micro
 $ make install
 ```
 
@@ -26,23 +29,23 @@ $ make install
 2. Set your HF personal access token in `.env`
 3. Run local microservice on localhost:8080
 
-    ```
-    $ make run
-    ```
+```
+$ make run
+```
 
 **To launch within Docker**
-1. Set your HF personal access token in [Makefile](./hf-micro/Makefile) line 2 
+1. Set your HF personal access token in [Makefile (line 2)](./hf-micro/Makefile)
 2. Build Docker image
 
-    ```
-    $ make build
-    ```
+```
+$ make build
+```
 
 3. Run Docker image
 
-    ```
-    $ make rundocker
-    ```
+```
+$ make rundocker
+```
 
 **Docker Debugging CA-Certificates**
 
@@ -51,7 +54,7 @@ If you have CA-certification issues you may need to manually mount self-signed c
 # make local certs dir
 $ mkdir ./certs
 # generate ca-certificates
-$ openssl req -x509 -newkey rsa:4096 -keyout ./certs/key.pem -out ./cert.pem -sha256 -days 365 -nodes -subj '/CN=localhost'
+$ openssl req -x509 -newkey rsa:4096 -keyout ./certs/key.pem -out ./certs/cert.pem -sha256 -days 365 -nodes -subj '/CN=localhost'
 ```
 
 Then launch Docker image with mounted certificates
@@ -107,7 +110,7 @@ Supported endpoints to base URL https://localhost:8080
 - [x] Debug reqwest x Rust x Docker CA Certificate bug
 - [x] Configure Actix logging
 - [ ] Actix HTTP error handling
-- [ ] CI/CD & Binary Release
+- [x] CI/CD & Binary Release
 - [ ] AWS Deployment
 
 

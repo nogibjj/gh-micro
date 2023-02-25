@@ -31,14 +31,12 @@ use serde_json::json;
 // Home route
 #[get("/")]
 async fn home() -> impl Responder {
-    println!("GET / request received");
     HttpResponse::Ok().body("Welcome to the Rust HuggingFace API Interface!")
 }
 
 // GET HuggingFace Hub account info from https://huggingface.co/api/whoami-v2
 #[get("/account")]
 async fn account() -> impl Responder {
-    println!("GET /api/account request received");
     // Create a new certified reqwest client
     let client = reqwest::Client::new();
     // Create authorization string
@@ -56,8 +54,6 @@ async fn account() -> impl Responder {
         reqwest::StatusCode::OK => {
             // Deserialize response
             let res_json = res.json::<AcctResponse>().await.unwrap();
-            // Print response
-            println!("{res_json:?}");
             let res_body = serde_json::to_string(&res_json).unwrap();
             // Return response
             HttpResponse::Ok().body(res_body)
@@ -74,7 +70,6 @@ async fn account() -> impl Responder {
 
 // POST new repo to HuggingFace Hub https://huggingface.co/api/repos/create
 pub async fn new_repo(repo_config: web::Json<NewRepo>) -> impl Responder {
-    println!("POST /api/repo request received");
     // Create a new certified reqwest client
     let client = reqwest::Client::new();
     // Create authorization string
@@ -109,7 +104,6 @@ pub async fn new_repo(repo_config: web::Json<NewRepo>) -> impl Responder {
 
 // DELETE repo from HuggingFace Hub https://huggingface.co/api/repos/delete
 pub async fn delete_repo(repo_config: web::Json<DeleteRepo>) -> impl Responder {
-    println!("DELETE /api/repo request received");
     // Create a new reqwest client
     let client = reqwest::Client::new();
     // Create authorization string
@@ -139,7 +133,6 @@ pub async fn delete_repo(repo_config: web::Json<DeleteRepo>) -> impl Responder {
 
 // PUT update repo visibility at https://huggingface.co/api/api/{type}/{namespace}/settings
 pub async fn update_repo(repo_config: web::Json<UpdateRepo>) -> impl Responder {
-    println!("PUT /api/repo request received");
     // Create a new reqwest client
     let client = reqwest::Client::new();
     // Create authorization string

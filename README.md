@@ -5,7 +5,7 @@ The [HuggingFace Hub](https://github.com/huggingface/huggingface_hub) is impleme
 ## What I Learnt
 
 * Configuring reqwest for GET, POST, PUT, DELETE requests
-* Certifying HTTPS using reqwest from within a Docker image (spent days exhausting certification solutions to debug this issue and it all came down to enabling the rustls-tls feature in reqwest and installing debian ca-certificates 🤯)
+* Certifying HTTPS using reqwest from within a Docker image -- I spent hours debugging and exhausting certification solutions and it all came down to enabling the rustls-tls feature in reqwest and installing debian ca-certificates 🤯
 
 
 ## Setup
@@ -105,10 +105,10 @@ Supported endpoints to base URL https://localhost:8080
 - [x] Configure GET, POST, DELETE, PUSH routes
 - [x] Pass environment variables into Docker per [docs](https://docs.docker.com/compose/environment-variables/set-environment-variables/#set-environment-variables-with-docker-compose-run---env)
 - [x] Debug reqwest x Rust x Docker CA Certificate bug
-- [ ] Unit testing
-- [ ] Python benchmarking
+- [x] Configure Actix logging
+- [ ] Actix HTTP error handling
 - [ ] CI/CD & Binary Release
-- [ ] AWS Deployment?
+- [ ] AWS Deployment
 
 
 ## References

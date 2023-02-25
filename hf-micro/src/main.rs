@@ -2,13 +2,15 @@
 An Actix microservice that uses reqwest to interface with the HuggingFace Hub REST API.
  */
 use actix_web::{middleware, web, App, HttpServer};
+use env_logger::Env;
 
 // Actix web client to make requests to the HuggingFace Hub REST API
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // Check for .env file and load environment variables
     dotenv::dotenv().ok();
-    println!("Actix web server launched...");
+    // Initialize logger
+    env_logger::init_from_env(Env::default().default_filter_or("info"));
     // Start http server
     HttpServer::new(move || {
         App::new()

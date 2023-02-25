@@ -109,9 +109,8 @@ Supported endpoints to base URL https://localhost:8080
 - [x] Pass environment variables into Docker per [docs](https://docs.docker.com/compose/environment-variables/set-environment-variables/#set-environment-variables-with-docker-compose-run---env)
 - [x] Debug reqwest x Rust x Docker CA Certificate bug
 - [x] Configure Actix logging
-- [ ] Actix HTTP error handling
+- [x] Actix HTTP error response handling
 - [x] CI/CD & Binary Release
-- [ ] AWS Deployment
 
 
 ## References

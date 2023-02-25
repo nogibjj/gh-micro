@@ -59,11 +59,11 @@ async fn account() -> impl Responder {
             HttpResponse::Ok().body(res_body)
         }
         reqwest::StatusCode::UNAUTHORIZED => {
-            HttpResponse::Ok().body("ERROR: Access token unauthorized")
+            HttpResponse::Unauthorized().body("ERROR: Access token unauthorized")
         }
         _ => {
             let err = format!("Error: {}", res.status());
-            HttpResponse::Ok().body(err)
+            HttpResponse::BadRequest().body(err)
         } 
     }
 }
@@ -93,11 +93,14 @@ pub async fn new_repo(repo_config: web::Json<NewRepo>) -> impl Responder {
             HttpResponse::Ok().body(res_body)
         }
         reqwest::StatusCode::UNAUTHORIZED => {
-            HttpResponse::Ok().body("ERROR: Access token unauthorized")
+            HttpResponse::Unauthorized().body("ERROR: Access token unauthorized")
+        }
+        reqwest::StatusCode::CONFLICT => {
+            HttpResponse::Conflict().body("ERROR: This repo already exists")
         }
         _ => {
             let err = format!("Error: {}", res.status());
-            HttpResponse::Ok().body(err)
+            HttpResponse::BadRequest().body(err)
         } 
     }
 }
@@ -120,13 +123,13 @@ pub async fn delete_repo(repo_config: web::Json<DeleteRepo>) -> impl Responder {
     // Match res status
     match res.status() {
         reqwest::StatusCode::OK => HttpResponse::Ok().body("SUCCESS: Deleted repo"),
-        reqwest::StatusCode::NOT_FOUND => HttpResponse::Ok().body("ERROR: Repo DNE"),
+        reqwest::StatusCode::NOT_FOUND => HttpResponse::NotFound().body("ERROR: Repo DNE"),
         reqwest::StatusCode::UNAUTHORIZED => {
-            HttpResponse::Ok().body("ERROR: Access token unauthorized")
+            HttpResponse::Unauthorized().body("ERROR: Access token unauthorized")
         }        
         _ => {
             let err = format!("Error: {}", res.status());
-            HttpResponse::Ok().body(err)
+            HttpResponse::BadRequest().body(err)
         } 
     }
 }
@@ -156,11 +159,15 @@ pub async fn update_repo(repo_config: web::Json<UpdateRepo>) -> impl Responder {
     match res.status() {
         reqwest::StatusCode::OK => HttpResponse::Ok().body("SUCCESS: Repo visibility updated"),
         reqwest::StatusCode::UNAUTHORIZED => {
-            HttpResponse::Ok().body("ERROR: Access token unauthorized")
+            HttpResponse::Unauthorized().body("ERROR: Access token unauthorized")
+        }
+        reqwest::StatusCode::NOT_FOUND => HttpResponse::NotFound().body("ERROR: Repo DNE"),
+        reqwest::StatusCode::CONFLICT => {
+            HttpResponse::Conflict().body("ERROR: Current repo visibility already set")
         }
         _ => {
             let err = format!("Error: {}", res.status());
-            HttpResponse::Ok().body(err)
+            HttpResponse::BadRequest().body(err)
         } 
     }
 }

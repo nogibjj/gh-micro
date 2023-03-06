@@ -47,7 +47,17 @@ $ make build
 $ make rundocker
 ```
 
-**Docker Debugging CA-Certificates**
+## Docker Debugging
+
+**`make build` error: ERROR [internal] load metadata for docker.io/library/debian:buster-slim**
+
+```
+$ rm  ~/.docker/config.json 
+# Retry
+$ make build
+```
+
+**CA-Certificates**
 
 If you have CA-certification issues you may need to manually mount self-signed certificates to the Docker image instead. To do this first generate .pem certificate
 ```
@@ -61,6 +71,27 @@ Then launch Docker image with mounted certificates
 
 ```
 $ make mntcerts
+```
+
+## Kubernetes Container
+
+```
+$ minikube start
+# Configure HF_ACCESS_TOKEN env variable
+$ kubectl create secret generic hf-micro --from-literal=HF_ACCESS_TOKEN=<YOUR_ACCESS_TOKEN>
+# Check secret
+# kubectl get secrets
+$ minikube dashboard --url
+$ kubectl create deployment hf-micro --image=registry.hub.docker.com/athletedecoded/hf-micro
+$ kubectl get deployments
+$ kubectl expose deployment hf-micro --type=LoadBalancer --port=8080
+$ kubectl get service hf-micro
+$ minikube service hf-micro --url
+# Open/curl above url
+# Cleanup and teardown
+$ kubectl delete service hf-micro
+$ kubectl delete deployment hf-micro
+$ minikube stop
 ```
 
 ## Useage & Endpoints
@@ -121,3 +152,4 @@ Supported endpoints to base URL https://localhost:8080
 * [Actix extractors](https://actix.rs/docs/extractors/)
 * [reqwest crate docs](https://crates.io/crates/reqwest)
 * [TLS Debugging Docker](https://smallstep.com/blog/automate-docker-ssl-tls-certificates/)
+
